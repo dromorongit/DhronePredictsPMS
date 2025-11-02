@@ -1,0 +1,16 @@
+[
+  {
+    "id": "d58f3233-c24d-4904-a7ed-e3cf0305a9a8",
+    "match": "Manchester United vs Liverpool",
+    "prediction": "Away Win",
+    "odds": "2.10",
+    "probability": "65%",
+    "category": "freeTips",
+    "date": "2025-11-03",
+    "status": "Pending",
+    "featured": true,
+    "note": "Premier League clash",
+    "createdAt": "2025-11-02T19:33:56.863Z",
+    "updatedAt": "2025-11-02T19:33:56.882Z"
+  }
+]
