@@ -13,7 +13,7 @@ RUN npm ci --only=production
 
 # Copy client directory and install client dependencies
 COPY client ./client
-RUN cd client && npm install --omit=dev
+RUN cd client && npm install
 
 # Copy all source files
 COPY . .
