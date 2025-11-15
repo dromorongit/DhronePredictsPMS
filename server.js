@@ -77,7 +77,7 @@ app.post('/api/auth/login', (req, res) => {
   }
 });
 
-app.get('/api/auth/verify', authenticate, (req, res) => {
+app.get('/api/auth/verify', (req, res) => {
   res.json({ success: true, user: { email: 'admin@dhronepredicts.com', name: 'Admin' } });
 });
 
