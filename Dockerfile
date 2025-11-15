@@ -12,7 +12,7 @@ RUN npm ci --only=production
 COPY client/package*.json ./client/
 WORKDIR /app/client
 RUN npm ci
-RUN find node_modules/.bin -type f -exec chmod +x {} \;
+RUN chmod -R +x node_modules/react-scripts/bin/
 
 # Copy all files
 WORKDIR /app
