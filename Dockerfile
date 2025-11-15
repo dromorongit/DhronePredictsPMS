@@ -12,6 +12,7 @@ RUN npm ci --only=production
 COPY client/package*.json ./client/
 WORKDIR /app/client
 RUN npm ci
+RUN chmod +x node_modules/.bin/*
 
 # Copy all files
 WORKDIR /app
