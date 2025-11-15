@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "cd client && npm start",
+    "build": "cd client && npm run build",
     "railway-build": "cd client && npm run build"
   },
   "dependencies": {
