@@ -84,18 +84,25 @@ app.get('/api/auth/verify', (req, res) => {
 // API routes
 app.get('/api/predictions', async (req, res) => {
   try {
-    const { category } = req.query;
-    
+    const { category, status } = req.query;
+
     if (category) {
       const filePath = path.join(dataDir, `${category}.json`);
-      const predictions = await fs.readJson(filePath);
+      let predictions = await fs.readJson(filePath);
+      if (status) {
+        predictions = predictions.filter(p => p.status === status);
+      }
       res.json(predictions);
     } else {
       // Get all predictions from all categories
       const allPredictions = {};
       for (const cat of categories) {
         const filePath = path.join(dataDir, `${cat}.json`);
-        allPredictions[cat] = await fs.readJson(filePath);
+        let catPredictions = await fs.readJson(filePath);
+        if (status) {
+          catPredictions = catPredictions.filter(p => p.status === status);
+        }
+        allPredictions[cat] = catPredictions;
       }
       res.json(allPredictions);
     }
