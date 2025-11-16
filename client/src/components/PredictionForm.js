@@ -4,6 +4,7 @@ import { FaTimes } from 'react-icons/fa';
 const PredictionForm = ({ prediction, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     match: '',
+    leagueType: '',
     prediction: '',
     odds: '',
     probability: '',
@@ -57,6 +58,7 @@ const PredictionForm = ({ prediction, onSubmit, onCancel }) => {
     if (prediction) {
       setFormData({
         match: prediction.match || '',
+        leagueType: prediction.leagueType || '',
         prediction: prediction.prediction || '',
         odds: prediction.odds || '',
         probability: prediction.probability || '',
@@ -131,20 +133,36 @@ const PredictionForm = ({ prediction, onSubmit, onCancel }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Match */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Match *
-            </label>
-            <input
-              type="text"
-              name="match"
-              value={formData.match}
-              onChange={handleChange}
-              placeholder="e.g., Real Madrid vs Barcelona"
-              className="input-field"
-              required
-            />
+          {/* Match and League Type */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Match *
+              </label>
+              <input
+                type="text"
+                name="match"
+                value={formData.match}
+                onChange={handleChange}
+                placeholder="e.g., Real Madrid vs Barcelona"
+                className="input-field"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                League Type
+              </label>
+              <input
+                type="text"
+                name="leagueType"
+                value={formData.leagueType}
+                onChange={handleChange}
+                placeholder="e.g., Premier League"
+                className="input-field"
+              />
+            </div>
           </div>
 
           {/* Prediction Type and Odds */}
