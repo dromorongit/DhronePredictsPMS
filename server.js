@@ -82,7 +82,7 @@ app.get('/api/auth/verify', (req, res) => {
 });
 
 // API routes
-app.get('/api/predictions', authenticate, async (req, res) => {
+app.get('/api/predictions', async (req, res) => {
   try {
     const { category } = req.query;
     
