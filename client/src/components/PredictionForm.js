@@ -10,6 +10,7 @@ const PredictionForm = ({ prediction, onSubmit, onCancel }) => {
     probability: '',
     category: 'freeTips',
     date: '',
+    time: '',
     status: 'Pending',
     featured: false,
     note: ''
@@ -40,12 +41,55 @@ const PredictionForm = ({ prediction, onSubmit, onCancel }) => {
     'Over 2.5 Goals',
     'Over 3.5 Goals',
     'Under 2.5 Goals',
+    'Under 3.5 Goals',
     'Both Teams To Score (Yes)',
     'Both Teams To Score (No)',
-    'Double Chance',
-    'Correct Score',
+    'Home or Draw',
+    'Home or Away',
+    'Draw or Away',
+    'Correct Score 0-0',
+    'Correct Score 1-1',
+    'Correct Score 2-2',
+    'Correct Score 3-3',
+    'Correct Score 4-4',
+    'Correct Score 1-0',
+    'Correct Score 2-0',
+    'Correct Score 3-0',
+    'Correct Score 4-0',
+    'Correct Score 0-1',
+    'Correct Score 0-2',
+    'Correct Score 0-3',
+    'Correct Score 0-4',
+    'Correct Score 2-1',
+    'Correct Score 3-1',
+    'Correct Score 4-1',
+    'Correct Score 3-2',
+    'Correct Score 4-2',
+    'Correct Score 4-3',
+    'Correct Score 1-2',
+    'Correct Score 1-3',
+    'Correct Score 2-3',
+    'Correct Score 1-4',
+    'Correct Score 2-4',
+    'Correct Score 3-4',
+    'Correct Score - Other',
     'HT/FT',
-    'Corner Over/Under',
+    'Over 5.5 Corners',
+    'Over 6.5 Corners',
+    'Over 7.5 Corners',
+    'Over 8.5 Corners',
+    'Over 9.5 Corners',
+    'Over 10.5 Corners',
+    'Over 11.5 Corners',
+    'Over 12.5 Corners',
+    'Under 13.5 Corners',
+    'Under 12.5 Corners',
+    'Under 11.5 Corners',
+    'Under 10.5 Corners',
+    'Under 9.5 Corners',
+    'Under 8.5 Corners',
+    'Under 7.5 Corners',
+    'Under 6.5 Corners',
     'First Goal Scorer',
     'Total Goals',
     'Asian Handicap',
@@ -64,6 +108,7 @@ const PredictionForm = ({ prediction, onSubmit, onCancel }) => {
         probability: prediction.probability || '',
         category: prediction.category || 'freeTips',
         date: prediction.date || '',
+        time: prediction.time || '',
         status: prediction.status || 'Pending',
         featured: prediction.featured || false,
         note: prediction.note || ''
@@ -237,7 +282,7 @@ const PredictionForm = ({ prediction, onSubmit, onCancel }) => {
             </div>
           </div>
 
-          {/* Date and Status */}
+          {/* Date and Time */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -253,6 +298,23 @@ const PredictionForm = ({ prediction, onSubmit, onCancel }) => {
               />
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Match Time
+              </label>
+              <input
+                type="time"
+                name="time"
+                value={formData.time}
+                onChange={handleChange}
+                placeholder="e.g., 15:00"
+                className="input-field"
+              />
+            </div>
+          </div>
+
+          {/* Status */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Status
