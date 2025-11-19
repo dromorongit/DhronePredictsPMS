@@ -1,6 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const fs = require('fs-extra');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -13,14 +15,38 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// MongoDB connection
+mongoose.connect(process.env.MONGODB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('MongoDB connection error:', err));
+
+// Prediction Schema
+const predictionSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  match: { type: String, required: true },
+  leagueType: String,
+  prediction: { type: String, required: true },
+  odds: String,
+  probability: String,
+  category: { type: String, required: true },
+  date: String,
+  time: String,
+  status: { type: String, default: 'Pending' },
+  featured: { type: Boolean, default: false },
+  note: String,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+const Prediction = mongoose.model('Prediction', predictionSchema);
+
 // Serve static files from client build in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
 }
-
-// Data directory
-const dataDir = path.join(__dirname, 'data');
-fs.ensureDirSync(dataDir);
 
 // Categories
 const categories = [
@@ -38,14 +64,6 @@ const categories = [
   'draws',
   'vvip'
 ];
-
-// Initialize category files if they don't exist
-categories.forEach(category => {
-  const filePath = path.join(dataDir, `${category}.json`);
-  if (!fs.existsSync(filePath)) {
-    fs.writeJsonSync(filePath, [], { spaces: 2 });
-  }
-});
 
 // Authentication middleware
 const authenticate = (req, res, next) => {
@@ -86,26 +104,20 @@ app.get('/api/predictions', async (req, res) => {
   try {
     const { category, status } = req.query;
 
+    let query = {};
     if (category) {
-      const filePath = path.join(dataDir, `${category}.json`);
-      let predictions = await fs.readJson(filePath);
-      if (status) {
-        predictions = predictions.filter(p => p.status === status);
-      }
-      res.json(predictions);
-    } else {
-      // Get all predictions from all categories
-      const allPredictions = {};
-      for (const cat of categories) {
-        const filePath = path.join(dataDir, `${cat}.json`);
-        let catPredictions = await fs.readJson(filePath);
-        if (status) {
-          catPredictions = catPredictions.filter(p => p.status === status);
-        }
-        allPredictions[cat] = catPredictions;
-      }
-      res.json(allPredictions);
+      query.category = category;
     }
+    if (status) {
+      query.status = status;
+    }
+
+    const predictions = await Prediction.find(query).sort({ createdAt: -1 });
+    res.json(category ? predictions : predictions.reduce((acc, pred) => {
+      if (!acc[pred.category]) acc[pred.category] = [];
+      acc[pred.category].push(pred);
+      return acc;
+    }, {}));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -113,23 +125,19 @@ app.get('/api/predictions', async (req, res) => {
 
 app.post('/api/predictions', authenticate, async (req, res) => {
   try {
-    const prediction = {
-      id: uuidv4(),
-      ...req.body,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
     const { category } = req.body;
     if (!category || !categories.includes(category)) {
       return res.status(400).json({ error: 'Invalid category' });
     }
 
-    const filePath = path.join(dataDir, `${category}.json`);
-    const predictions = await fs.readJson(filePath);
-    predictions.push(prediction);
-    await fs.writeJson(filePath, predictions, { spaces: 2 });
+    const prediction = new Prediction({
+      id: uuidv4(),
+      ...req.body,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
 
+    await prediction.save();
     res.status(201).json(prediction);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -140,27 +148,22 @@ app.put('/api/predictions/:id', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
     const { category, ...updateData } = req.body;
-    
+
     if (!category || !categories.includes(category)) {
       return res.status(400).json({ error: 'Invalid category' });
     }
 
-    const filePath = path.join(dataDir, `${category}.json`);
-    const predictions = await fs.readJson(filePath);
-    const predictionIndex = predictions.findIndex(p => p.id === id);
-    
-    if (predictionIndex === -1) {
+    const prediction = await Prediction.findOneAndUpdate(
+      { id },
+      { ...updateData, updatedAt: new Date() },
+      { new: true }
+    );
+
+    if (!prediction) {
       return res.status(404).json({ error: 'Prediction not found' });
     }
 
-    predictions[predictionIndex] = {
-      ...predictions[predictionIndex],
-      ...updateData,
-      updatedAt: new Date().toISOString()
-    };
-
-    await fs.writeJson(filePath, predictions, { spaces: 2 });
-    res.json(predictions[predictionIndex]);
+    res.json(prediction);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -169,23 +172,54 @@ app.put('/api/predictions/:id', authenticate, async (req, res) => {
 app.delete('/api/predictions/:id', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
-    const { category } = req.body;
-    
-    if (!category || !categories.includes(category)) {
-      return res.status(400).json({ error: 'Invalid category' });
-    }
 
-    const filePath = path.join(dataDir, `${category}.json`);
-    const predictions = await fs.readJson(filePath);
-    const predictionIndex = predictions.findIndex(p => p.id === id);
-    
-    if (predictionIndex === -1) {
+    const deletedPrediction = await Prediction.findOneAndDelete({ id });
+
+    if (!deletedPrediction) {
       return res.status(404).json({ error: 'Prediction not found' });
     }
 
-    const deletedPrediction = predictions.splice(predictionIndex, 1)[0];
-    await fs.writeJson(filePath, predictions, { spaces: 2 });
     res.json({ success: true, deleted: deletedPrediction });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Migration endpoint - call this once after deployment to import existing data
+app.post('/api/migrate', authenticate, async (req, res) => {
+  try {
+    const fs = require('fs-extra');
+    const path = require('path');
+    const { v4: uuidv4 } = require('uuid');
+
+    const dataDir = path.join(__dirname, 'data');
+    let migratedCount = 0;
+
+    for (const category of categories) {
+      const filePath = path.join(dataDir, `${category}.json`);
+
+      if (await fs.pathExists(filePath)) {
+        console.log(`Migrating ${category}...`);
+        const predictions = await fs.readJson(filePath);
+
+        for (const pred of predictions) {
+          // Check if prediction already exists
+          const existing = await Prediction.findOne({ id: pred.id });
+          if (!existing) {
+            const newPred = new Prediction({
+              ...pred,
+              category,
+              createdAt: pred.createdAt ? new Date(pred.createdAt) : new Date(),
+              updatedAt: pred.updatedAt ? new Date(pred.updatedAt) : new Date()
+            });
+            await newPred.save();
+            migratedCount++;
+          }
+        }
+      }
+    }
+
+    res.json({ success: true, message: `Migration completed. ${migratedCount} predictions migrated.` });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
