@@ -276,12 +276,36 @@ const Dashboard = () => {
 
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
             <div className="flex items-center">
+              <div className="p-2 rounded-full bg-yellow-100 mr-3">
+                <FaClock className="w-4 h-4 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-600">Pending</p>
+                <p className="text-lg font-bold text-gray-900">{stats.pending}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+            <div className="flex items-center">
               <div className="p-2 rounded-full bg-green-100 mr-3">
                 <FaCheckCircle className="w-4 h-4 text-green-600" />
               </div>
               <div>
                 <p className="text-xs font-medium text-gray-600">Won</p>
                 <p className="text-lg font-bold text-gray-900">{stats.won}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+            <div className="flex items-center">
+              <div className="p-2 rounded-full bg-red-100 mr-3">
+                <FaTimesCircle className="w-4 h-4 text-red-600" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-600">Lost</p>
+                <p className="text-lg font-bold text-gray-900">{stats.lost}</p>
               </div>
             </div>
           </div>
