@@ -135,20 +135,20 @@ const PredictionTable = ({ predictions, onEdit, onDelete }) => {
                   </span>
                 </td>
                 <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-1 md:space-x-2">
                     <button
                       onClick={() => onEdit(prediction)}
-                      className="text-primary hover:text-primary-dark transition duration-200"
+                      className="p-2 md:p-1 text-primary hover:text-primary-dark hover:bg-blue-50 rounded transition duration-200"
                       title="Edit prediction"
                     >
-                      <FaEdit className="w-4 h-4" />
+                      <FaEdit className="w-4 h-4 md:w-4 md:h-4" />
                     </button>
                     <button
                       onClick={() => onDelete(prediction, prediction.category)}
-                      className="text-red-600 hover:text-red-900 transition duration-200"
+                      className="p-2 md:p-1 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition duration-200"
                       title="Delete prediction"
                     >
-                      <FaTrash className="w-4 h-4" />
+                      <FaTrash className="w-4 h-4 md:w-4 md:h-4" />
                     </button>
                   </div>
                 </td>

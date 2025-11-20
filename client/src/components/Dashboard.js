@@ -144,53 +144,53 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
         <div className="card">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-blue-100 mr-4">
-              <FaFilter className="w-6 h-6 text-primary" />
+            <div className="p-2 md:p-3 rounded-full bg-blue-100 mr-3 md:mr-4">
+              <FaFilter className="w-5 h-5 md:w-6 md:h-6 text-primary" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Predictions</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <p className="text-xs md:text-sm font-medium text-gray-600">Total</p>
+              <p className="text-xl md:text-2xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
         </div>
 
         <div className="card">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-yellow-100 mr-4">
-              <FaSearch className="w-6 h-6 text-yellow-600" />
+            <div className="p-2 md:p-3 rounded-full bg-yellow-100 mr-3 md:mr-4">
+              <FaSearch className="w-5 h-5 md:w-6 md:h-6 text-yellow-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+              <p className="text-xs md:text-sm font-medium text-gray-600">Pending</p>
+              <p className="text-xl md:text-2xl font-bold text-gray-900">{stats.pending}</p>
             </div>
           </div>
         </div>
 
         <div className="card">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-green-100 mr-4">
-              <FaEdit className="w-6 h-6 text-green-600" />
+            <div className="p-2 md:p-3 rounded-full bg-green-100 mr-3 md:mr-4">
+              <FaEdit className="w-5 h-5 md:w-6 md:h-6 text-green-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Won</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.won}</p>
+              <p className="text-xs md:text-sm font-medium text-gray-600">Won</p>
+              <p className="text-xl md:text-2xl font-bold text-gray-900">{stats.won}</p>
             </div>
           </div>
         </div>
 
         <div className="card">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-red-100 mr-4">
-              <FaTrash className="w-6 h-6 text-red-600" />
+            <div className="p-2 md:p-3 rounded-full bg-red-100 mr-3 md:mr-4">
+              <FaTrash className="w-5 h-5 md:w-6 md:h-6 text-red-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Lost</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.lost}</p>
+              <p className="text-xs md:text-sm font-medium text-gray-600">Lost</p>
+              <p className="text-xl md:text-2xl font-bold text-gray-900">{stats.lost}</p>
             </div>
           </div>
         </div>
@@ -198,43 +198,45 @@ const Dashboard = () => {
 
       {/* Controls */}
       <div className="card">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-            {/* Category Filter */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="input-field max-w-xs"
-            >
-              <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-
-            {/* Search */}
-            <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search predictions..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 input-field max-w-xs"
-              />
-            </div>
-          </div>
-
-          {/* Add Button */}
+        <div className="flex flex-col space-y-4">
+          {/* Add Button - Full width on mobile */}
           <button
             onClick={handleAddPrediction}
-            className="btn-primary flex items-center space-x-2"
+            className="btn-primary w-full md:w-auto flex items-center justify-center space-x-2 py-3 md:py-2 px-6 text-base md:text-sm"
           >
-            <FaPlus className="w-4 h-4" />
-            <span>Add Prediction</span>
+            <FaPlus className="w-5 h-5 md:w-4 md:h-4" />
+            <span>Add New Prediction</span>
           </button>
+
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+              {/* Category Filter */}
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="input-field max-w-xs"
+              >
+                <option value="all">All Categories</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Search */}
+              <div className="relative">
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search predictions..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 input-field max-w-xs"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
