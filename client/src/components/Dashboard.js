@@ -6,6 +6,7 @@ import PredictionForm from './PredictionForm';
 import PredictionTable from './PredictionTable';
 import MobilePredictionCard from './MobilePredictionCard';
 import MobileNav from './MobileNav';
+import ConfirmationModal from './ConfirmationModal';
 
 const Dashboard = () => {
   const [predictions, setPredictions] = useState({});
@@ -15,6 +16,8 @@ const Dashboard = () => {
   const [editingPrediction, setEditingPrediction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [predictionToDelete, setPredictionToDelete] = useState(null);
 
   const categories = [
     { id: 'freeTips', name: 'Free Tips' },
@@ -59,22 +62,30 @@ const Dashboard = () => {
     setShowForm(true);
   };
 
-  const handleDeletePrediction = async (prediction, category) => {
-    if (!window.confirm('Are you sure you want to delete this prediction?')) {
-      return;
-    }
+  const handleDeletePrediction = (prediction, category) => {
+    setPredictionToDelete({ prediction, category });
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeletePrediction = async () => {
+    if (!predictionToDelete) return;
 
     try {
-      await api.delete(`/predictions/${prediction.id}`, {
-        data: { category }
+      await api.delete(`/predictions/${predictionToDelete.prediction.id}`, {
+        data: { category: predictionToDelete.category }
       });
-      
+
       toast.success('Prediction deleted successfully');
       fetchPredictions();
     } catch (error) {
       toast.error('Failed to delete prediction');
       console.error('Error deleting prediction:', error);
     }
+  };
+
+  const cancelDeletePrediction = () => {
+    setShowDeleteModal(false);
+    setPredictionToDelete(null);
   };
 
   const handleFormSubmit = async (predictionData) => {
@@ -372,6 +383,18 @@ const Dashboard = () => {
           onCancel={handleFormCancel}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={cancelDeletePrediction}
+        onConfirm={confirmDeletePrediction}
+        title="Delete Prediction"
+        message={`Are you sure you want to delete the prediction for "${predictionToDelete?.prediction?.match}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </>
   );
 };
