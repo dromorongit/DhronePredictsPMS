@@ -1,8 +1,8 @@
 import React from 'react';
-import { FaSignOutAlt, FaBell, FaUser } from 'react-icons/fa';
+import { FaSignOutAlt, FaBell, FaUser, FaBars } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 
-const Header = () => {
+const Header = ({ onToggleSidebar }) => {
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
@@ -10,16 +10,25 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+    <header className="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-4">
       <div className="flex items-center justify-between">
-        {/* Left side - Title */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-          <p className="text-sm text-gray-600">Manage your football predictions</p>
+        {/* Left side - Hamburger and Title */}
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={onToggleSidebar}
+            className="md:hidden p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition duration-200"
+            aria-label="Toggle sidebar"
+          >
+            <FaBars className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800">Dashboard</h1>
+            <p className="text-sm text-gray-600 hidden sm:block">Manage your football predictions</p>
+          </div>
         </div>
 
         {/* Right side - User actions */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
           {/* Notifications */}
           <button className="relative p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition duration-200">
             <FaBell className="w-5 h-5" />

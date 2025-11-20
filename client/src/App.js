@@ -44,6 +44,42 @@ function App() {
 
 function ProtectedRoutes() {
   const { user, loading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar on mobile when clicking outside or on link
+  const closeSidebar = () => setSidebarOpen(false);
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+      <div className="flex-1 flex flex-col md:ml-0">
+        <Header onToggleSidebar={toggleSidebar} />
+        <main className="flex-1 p-4 md:p-6">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function ProtectedRoutes() {
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (

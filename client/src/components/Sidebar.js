@@ -1,8 +1,8 @@
 import React from 'react';
-import { FaHome, FaTrophy, FaFootballBall, FaChartLine, FaCrown, FaShieldAlt, FaBullseye, FaChartBar, FaCrosshairs, FaBoxOpen, FaTrophy as FaWin, FaHandshake, FaStar } from 'react-icons/fa';
+import { FaHome, FaTrophy, FaFootballBall, FaChartLine, FaCrown, FaShieldAlt, FaBullseye, FaChartBar, FaCrosshairs, FaBoxOpen, FaTrophy as FaWin, FaHandshake, FaStar, FaTimes } from 'react-icons/fa';
 import { MdVerifiedUser } from 'react-icons/md';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const categories = [
     { id: 'freeTips', name: 'Free Tips', icon: FaHome, featured: true },
     { id: 'bankerTips', name: 'Banker Tips', icon: FaTrophy, featured: true },
@@ -20,19 +20,39 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-white shadow-lg min-h-screen">
-      {/* Logo/Header */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center">
-          <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-3">
-            <span className="text-white font-bold text-lg">DP</span>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">DhronePredicts</h1>
-            <p className="text-sm text-gray-600">Management</p>
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      <div className={`w-64 bg-white shadow-lg min-h-screen fixed md:relative top-0 left-0 z-50 transform transition-transform duration-300 ease-in-out ${
+        isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+      }`}>
+        {/* Close button for mobile */}
+        <button
+          onClick={onClose}
+          className="md:hidden absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-800"
+          aria-label="Close sidebar"
+        >
+          <FaTimes className="w-5 h-5" />
+        </button>
+
+        {/* Logo/Header */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-3">
+              <span className="text-white font-bold text-lg">DP</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">DhronePredicts</h1>
+              <p className="text-sm text-gray-600">Management</p>
+            </div>
           </div>
         </div>
-      </div>
 
       {/* Navigation */}
       <nav className="p-4">
@@ -84,7 +104,8 @@ const Sidebar = () => {
           </p>
         </div>
       </nav>
-    </div>
+      </div>
+    </>
   );
 };
 
