@@ -63,11 +63,25 @@ function ProtectedRoutes() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-      <div className="flex-1 flex flex-col md:ml-0">
+    <div className="min-h-screen">
+      {/* Desktop Layout */}
+      <div className="hidden md:flex min-h-screen">
+        <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+        <div className="flex-1 flex flex-col">
+          <Header onToggleSidebar={toggleSidebar} />
+          <main className="flex-1 p-6">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+          </main>
+        </div>
+      </div>
+
+      {/* Mobile Layout */}
+      <div className="md:hidden min-h-screen">
         <Header onToggleSidebar={toggleSidebar} />
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 pt-16 pb-20">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />

@@ -10,25 +10,25 @@ const Header = ({ onToggleSidebar }) => {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-4">
+    <header className="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-3 md:py-4 fixed md:relative top-0 left-0 right-0 z-40">
       <div className="flex items-center justify-between">
         {/* Left side - Hamburger and Title */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3 md:space-x-4">
           <button
             onClick={onToggleSidebar}
-            className="md:hidden p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition duration-200"
+            className="md:block hidden p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition duration-200"
             aria-label="Toggle sidebar"
           >
             <FaBars className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-800">Dashboard</h1>
-            <p className="text-sm text-gray-600 hidden sm:block">Manage your football predictions</p>
+            <h1 className="text-lg md:text-2xl font-bold text-gray-800">DhronePredicts</h1>
+            <p className="text-xs md:text-sm text-gray-600 hidden md:block">Manage your football predictions</p>
           </div>
         </div>
 
         {/* Right side - User actions */}
-        <div className="flex items-center space-x-2 md:space-x-4">
+        <div className="flex items-center space-x-1 md:space-x-4">
           {/* Notifications */}
           <button className="relative p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition duration-200">
             <FaBell className="w-5 h-5" />

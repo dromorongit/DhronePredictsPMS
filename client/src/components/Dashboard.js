@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { FaPlus, FaEdit, FaTrash, FaFilter, FaSearch } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaFilter, FaSearch, FaTrophy, FaChartLine, FaClock, FaCheckCircle, FaTimesCircle, FaMinusCircle } from 'react-icons/fa';
 import api from '../api/api';
 import PredictionForm from './PredictionForm';
 import PredictionTable from './PredictionTable';
+import MobilePredictionCard from './MobilePredictionCard';
+import MobileNav from './MobileNav';
 
 const Dashboard = () => {
   const [predictions, setPredictions] = useState({});
@@ -12,6 +14,7 @@ const Dashboard = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingPrediction, setEditingPrediction] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   const categories = [
     { id: 'freeTips', name: 'Free Tips' },
@@ -98,6 +101,13 @@ const Dashboard = () => {
     setEditingPrediction(null);
   };
 
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    if (tabId === 'add') {
+      handleAddPrediction();
+    }
+  };
+
   // Filter predictions based on selected category and search term
   const getFilteredPredictions = () => {
     let filtered = [];
@@ -144,72 +154,64 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      {/* Header Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-2 md:p-3 rounded-full bg-blue-100 mr-3 md:mr-4">
-              <FaFilter className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+    <>
+      {/* Desktop Layout */}
+      <div className="hidden md:block space-y-6">
+        {/* Header Stats */}
+        <div className="grid grid-cols-4 gap-6">
+          <div className="card">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-blue-100 mr-4">
+                <FaFilter className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Predictions</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs md:text-sm font-medium text-gray-600">Total</p>
-              <p className="text-xl md:text-2xl font-bold text-gray-900">{stats.total}</p>
+          </div>
+
+          <div className="card">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-yellow-100 mr-4">
+                <FaClock className="w-6 h-6 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Pending</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-green-100 mr-4">
+                <FaCheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Won</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.won}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-red-100 mr-4">
+                <FaTimesCircle className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Lost</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.lost}</p>
+              </div>
             </div>
           </div>
         </div>
 
+        {/* Controls */}
         <div className="card">
-          <div className="flex items-center">
-            <div className="p-2 md:p-3 rounded-full bg-yellow-100 mr-3 md:mr-4">
-              <FaSearch className="w-5 h-5 md:w-6 md:h-6 text-yellow-600" />
-            </div>
-            <div>
-              <p className="text-xs md:text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-xl md:text-2xl font-bold text-gray-900">{stats.pending}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-2 md:p-3 rounded-full bg-green-100 mr-3 md:mr-4">
-              <FaEdit className="w-5 h-5 md:w-6 md:h-6 text-green-600" />
-            </div>
-            <div>
-              <p className="text-xs md:text-sm font-medium text-gray-600">Won</p>
-              <p className="text-xl md:text-2xl font-bold text-gray-900">{stats.won}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center">
-            <div className="p-2 md:p-3 rounded-full bg-red-100 mr-3 md:mr-4">
-              <FaTrash className="w-5 h-5 md:w-6 md:h-6 text-red-600" />
-            </div>
-            <div>
-              <p className="text-xs md:text-sm font-medium text-gray-600">Lost</p>
-              <p className="text-xl md:text-2xl font-bold text-gray-900">{stats.lost}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="card">
-        <div className="flex flex-col space-y-4">
-          {/* Add Button - Full width on mobile */}
-          <button
-            onClick={handleAddPrediction}
-            className="btn-primary w-full md:w-auto flex items-center justify-center space-x-2 py-3 md:py-2 px-6 text-base md:text-sm"
-          >
-            <FaPlus className="w-5 h-5 md:w-4 md:h-4" />
-            <span>Add New Prediction</span>
-          </button>
-
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex items-center space-x-4">
               {/* Category Filter */}
               <select
                 value={selectedCategory}
@@ -236,16 +238,107 @@ const Dashboard = () => {
                 />
               </div>
             </div>
+
+            {/* Add Button */}
+            <button
+              onClick={handleAddPrediction}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <FaPlus className="w-4 h-4" />
+              <span>Add Prediction</span>
+            </button>
           </div>
+        </div>
+
+        {/* Predictions Table */}
+        <PredictionTable
+          predictions={filteredPredictions}
+          onEdit={handleEditPrediction}
+          onDelete={handleDeletePrediction}
+        />
+      </div>
+
+      {/* Mobile Layout */}
+      <div className="md:hidden pb-20">
+        {/* Mobile Header Stats */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+            <div className="flex items-center">
+              <div className="p-2 rounded-full bg-blue-100 mr-3">
+                <FaTrophy className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-600">Total</p>
+                <p className="text-lg font-bold text-gray-900">{stats.total}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+            <div className="flex items-center">
+              <div className="p-2 rounded-full bg-green-100 mr-3">
+                <FaCheckCircle className="w-4 h-4 text-green-600" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-600">Won</p>
+                <p className="text-lg font-bold text-gray-900">{stats.won}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Filters */}
+        <div className="mb-4">
+          <div className="flex space-x-2 mb-3">
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="flex-1 input-field text-sm"
+            >
+              <option value="all">All Categories</option>
+              {categories.map(category => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="relative">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search predictions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 input-field w-full text-sm"
+            />
+          </div>
+        </div>
+
+        {/* Mobile Predictions List */}
+        <div className="space-y-3">
+          {filteredPredictions.length === 0 ? (
+            <div className="text-center py-12">
+              <FaChartLine className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No predictions found</h3>
+              <p className="text-gray-600">Get started by adding your first prediction!</p>
+            </div>
+          ) : (
+            filteredPredictions.map((prediction) => (
+              <MobilePredictionCard
+                key={prediction.id}
+                prediction={prediction}
+                onEdit={handleEditPrediction}
+                onDelete={handleDeletePrediction}
+              />
+            ))
+          )}
         </div>
       </div>
 
-      {/* Predictions Table */}
-      <PredictionTable
-        predictions={filteredPredictions}
-        onEdit={handleEditPrediction}
-        onDelete={handleDeletePrediction}
-      />
+      {/* Mobile Navigation */}
+      <MobileNav activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* Prediction Form Modal */}
       {showForm && (
@@ -255,7 +348,7 @@ const Dashboard = () => {
           onCancel={handleFormCancel}
         />
       )}
-    </div>
+    </>
   );
 };
 
